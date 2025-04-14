@@ -1,21 +1,15 @@
-import { Sequelize } from 'sequelize';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'social_service',
-  process.env.DB_USERNAME || 'root',
-  process.env.DB_PASSWORD || '',
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
   {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: 'mysql',
-    logging: false,
-    dialectOptions: {
-      dateStrings: true,
-      typeCast: true,
-    },
-    timezone: '+07:00',
+    logging: process.env.NODE_ENV === 'development' ? console.log : false,
     pool: {
       max: 5,
       min: 0,
@@ -25,4 +19,4 @@ const sequelize = new Sequelize(
   }
 );
 
-export default sequelize; 
+module.exports = sequelize; 
