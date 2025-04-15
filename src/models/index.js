@@ -6,6 +6,7 @@ import Comment from './comment.model';
 import Follow from './follow.model';
 import Notification from './notification.model';
 import Hashtag from './hashtag.model';
+import User from './User';
 
 // Initialize models
 const models = {
@@ -15,12 +16,19 @@ const models = {
   Comment,
   Follow,
   Notification,
-  Hashtag
+  Hashtag,
+  User
 };
 
 // Define relationships
 // Additional relationships can be defined here if needed
 // Most are already defined in individual model files
+
+// User - Post relationship
+User.hasMany(Post, {
+  foreignKey: 'userId',
+  as: 'posts'
+});
 
 // Function to sync all models with the database
 const syncDatabase = async (options = {}) => {
@@ -44,5 +52,6 @@ export {
   Comment,
   Follow,
   Notification,
-  Hashtag
+  Hashtag,
+  User
 }; 

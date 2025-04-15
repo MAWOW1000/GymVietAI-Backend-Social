@@ -8,11 +8,8 @@ import * as dotenv from 'dotenv';
 import morgan from 'morgan';
 
 // Import routes
-import postRoutes from './routes/post.route.js';
-import profileRoutes from './routes/profile.route.js';
-import likeRoutes from './routes/like.route.js';
-import followRoutes from './routes/follow.route.js';
-import notificationRoutes from './routes/notification.route.js';
+import routes from './routes/index.js';
+import { initializeDatabase } from './utils/database';
 
 dotenv.config();
 
@@ -36,19 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // API routes
-app.use('/api/v1/posts', postRoutes);
-app.use('/api/v1/profiles', profileRoutes);
-app.use('/api/v1/likes', likeRoutes);
-app.use('/api/v1/follows', followRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    message: 'Social Service is running!',
-    timestamp: new Date().toISOString()
-  });
-});
+app.use(routes);
 
 // Create HTTP server and Socket.io instance
 const httpServer = createServer(app);
@@ -91,7 +76,40 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-httpServer.listen(port, () => {
-  console.log(`Social Service is running on port ${port}`);
-}); 
+// Start server function
+const startServer = async () => {
+  try {
+    // Initialize database
+    const dbInitialized = await initializeDatabase();
+    if (!dbInitialized) {
+      console.error('Failed to initialize database. Exiting...');
+      process.exit(1);
+    }
+    
+    // Start the server
+    httpServer.listen(port, () => {
+      console.log(`Social Service is running on port ${port}`);
+      console.log(`Environment: ${process.env.NODE_ENV}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message);
+  httpServer.close(() => {
+    process.exit(1);
+  });
+});
+
+// Start server if this file is run directly
+if (require.main === module) {
+  startServer();
+} else {
+  // Export for testing
+  module.exports = { app, startServer };
+} 

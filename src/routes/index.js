@@ -4,9 +4,14 @@ import likeRoutes from './like.route';
 import followRoutes from './follow.route';
 import notificationRoutes from './notification.route';
 import profileRoutes from './profile.route';
+import authRoutes from './authRoutes';
+import userRoutes from './userRoutes';
 import { authenticate, optionalAuth } from '../middleware/auth.middleware';
 
 const router = express.Router();
+
+// API version prefix
+const API_PREFIX = '/api/v1';
 
 // Health check
 router.get('/health', (req, res) => {
@@ -17,26 +22,14 @@ router.get('/health', (req, res) => {
   });
 });
 
-// Prefix all routes with /api/v1
-const apiRouter = express.Router();
-
-// Profile routes
-apiRouter.use('/profiles', profileRoutes);
-
-// Post routes - some public endpoints with optional auth
-apiRouter.use('/posts', postRoutes);
-
-// Like routes - all require authentication
-apiRouter.use('/likes', authenticate, likeRoutes);
-
-// Follow routes - all require authentication
-apiRouter.use('/follows', authenticate, followRoutes);
-
-// Notification routes - all require authentication
-apiRouter.use('/notifications', authenticate, notificationRoutes);
-
-// Mount API router
-router.use('/api/v1', apiRouter);
+// Mount routes
+router.use(`${API_PREFIX}/auth`, authRoutes);
+router.use(`${API_PREFIX}/profiles`, profileRoutes);
+router.use(`${API_PREFIX}/posts`, postRoutes);
+router.use(`${API_PREFIX}/likes`, authenticate, likeRoutes);
+router.use(`${API_PREFIX}/follows`, authenticate, followRoutes);
+router.use(`${API_PREFIX}/notifications`, authenticate, notificationRoutes);
+router.use(`${API_PREFIX}/users`, userRoutes);
 
 // Error handling for undefined routes
 router.use('*', (req, res) => {
@@ -46,4 +39,4 @@ router.use('*', (req, res) => {
   });
 });
 
-export default router; 
+export default router;

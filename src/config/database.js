@@ -9,8 +9,9 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD || '',
   {
     host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
-    logging: false,
+    logging: process.env.NODE_ENV === 'development' ? console.log : false,
     dialectOptions: {
       dateStrings: true,
       typeCast: true,
@@ -25,4 +26,4 @@ const sequelize = new Sequelize(
   }
 );
 
-export default sequelize; 
+export default sequelize;

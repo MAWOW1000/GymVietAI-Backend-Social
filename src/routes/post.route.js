@@ -6,11 +6,11 @@ import {
   getFeed,
   getReplies,
   getProfilePosts
-} from '../controller/post.controller';
-import { authenticate, optionalAuth } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { PostSchema } from '../models/post.model';
-import { paginationSchema, idSchema } from '../middleware/validation.middleware';
+} from '../controllers/post.controller.js';
+import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validation.middleware.js';
+import { PostSchema } from '../models/post.model.js';
+import { paginationSchema, idSchema } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 

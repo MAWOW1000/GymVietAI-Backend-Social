@@ -1,119 +1,139 @@
 # Social Service
 
-Dịch vụ mạng xã hội giống Threads, cung cấp API endpoints cho các tính năng mạng xã hội.
+A RESTful API and real-time messaging backend for a social networking application similar to Threads, built with Express.js, MySQL/Sequelize, and Socket.io.
 
-## Tính năng
+## Features
 
-- **User Profiles**: Tạo và quản lý hồ sơ người dùng
-- **Posts & Threads**: Tạo bài đăng, phản hồi thread và chuỗi hội thoại
-- **Social Interactions**: Like, comment bài viết
-- **Follow System**: Follow/unfollow người dùng, xem follower/following
-- **Notifications**: Thông báo cho các tương tác
-- **Discovery**: Tìm kiếm người dùng, khám phá hashtag xu hướng
+- **User Profiles**: Create and manage user profiles
+- **Posts & Threads**: Create posts, reply to threads and conversation chains
+- **Social Interactions**: Like, comment on posts
+- **Follow System**: Follow/unfollow users, view followers/following
+- **Notifications**: Get notifications for interactions
+- **Discovery**: Search users, explore trending hashtags
+- **Real-time Messaging**: Private messaging between users
+- **Online/Offline Status**: Track user online status
 
-## Công nghệ sử dụng
+## Technologies
 
-- Node.js
-- Express.js
-- MySQL với Sequelize ORM
-- JWT Authentication (tích hợp với Authen_service)
-- Zod Validation
+- **Node.js & Express.js**: API framework
+- **MySQL**: Database with Sequelize ORM
+- **JWT Authentication**: Integrated with Authen_service
+- **Socket.io**: Real-time communication
+- **Zod**: Data validation
 
-## Cài đặt
+## Installation
 
-1. Clone repository về máy
-2. Cài đặt các dependencies:
+1. Clone repository
+2. Install dependencies:
    ```
    npm install
    ```
-3. Thiết lập biến môi trường:
+3. Setup environment variables:
    ```
    cp .env.example .env
    ```
-   Cập nhật file `.env` với cấu hình của bạn
+   Update the `.env` file with your configuration
 
-4. Tạo database:
+4. Create database:
    ```
    npx sequelize-cli db:create
    npx sequelize-cli db:migrate
    ```
 
-5. Khởi chạy server:
+5. Start server:
    ```
-   npm start
+   npm run dev
    ```
 
 ## API Endpoints
 
-### Endpoint Profiles
-- `GET /api/v1/profiles/:identifier` - Lấy thông tin hồ sơ theo username hoặc ID
-- `GET /api/v1/profiles/me` - Lấy thông tin hồ sơ của người dùng hiện tại
-- `PUT /api/v1/profiles/me` - Cập nhật hồ sơ của người dùng hiện tại
-- `GET /api/v1/profiles/search` - Tìm kiếm hồ sơ người dùng
+### Authentication
+- `POST /api/v1/auth/register`: Register a new user
+- `POST /api/v1/auth/login`: Login with email and password
+- `GET /api/v1/auth/me`: Get current user profile
 
-### Endpoint Posts
-- `POST /api/v1/posts` - Tạo bài đăng mới
-- `GET /api/v1/posts/:id` - Lấy thông tin bài đăng
-- `DELETE /api/v1/posts/:id` - Xóa bài đăng
-- `GET /api/v1/posts/feed` - Lấy feed (bài đăng từ người dùng đang theo dõi)
-- `GET /api/v1/posts/:id/replies` - Lấy các phản hồi của bài đăng
-- `GET /api/v1/posts/profile/:identifier` - Lấy bài đăng của một hồ sơ cụ thể
+### Profiles
+- `GET /api/v1/profiles/:identifier`: Get profile by username or ID
+- `GET /api/v1/profiles/me`: Get current user's profile
+- `PUT /api/v1/profiles/me`: Update current user's profile
+- `GET /api/v1/profiles/search`: Search user profiles
 
-### Endpoint Likes
-- `POST /api/v1/likes/:postId` - Like một bài đăng
-- `DELETE /api/v1/likes/:postId` - Unlike một bài đăng
-- `GET /api/v1/likes/:postId` - Lấy danh sách người dùng đã like bài đăng
+### Posts
+- `POST /api/v1/posts`: Create a new post
+- `GET /api/v1/posts`: Get all posts (with pagination)
+- `GET /api/v1/posts/:id`: Get a specific post with comments
+- `PUT /api/v1/posts/:id`: Update a post
+- `DELETE /api/v1/posts/:id`: Delete a post
+- `GET /api/v1/posts/feed`: Get feed (posts from followed users)
+- `GET /api/v1/posts/:id/replies`: Get replies to a post
+- `GET /api/v1/posts/profile/:identifier`: Get posts from a specific profile
+- `POST /api/v1/posts/:id/like`: Like/unlike a post
 
-### Endpoint Follows
-- `POST /api/v1/follows/:targetId` - Follow một hồ sơ
-- `DELETE /api/v1/follows/:targetId` - Unfollow một hồ sơ
-- `GET /api/v1/follows/followers/:identifier` - Lấy danh sách follower của một hồ sơ
-- `GET /api/v1/follows/following/:identifier` - Lấy danh sách following của một hồ sơ
+### Likes
+- `POST /api/v1/likes/:postId`: Like a post
+- `DELETE /api/v1/likes/:postId`: Unlike a post
+- `GET /api/v1/likes/:postId`: Get users who liked a post
 
-### Endpoint Notifications
-- `GET /api/v1/notifications` - Lấy thông báo của người dùng
-- `PATCH /api/v1/notifications/read` - Đánh dấu thông báo đã đọc
-- `GET /api/v1/notifications/unread-count` - Lấy số lượng thông báo chưa đọc
+### Comments
+- `POST /api/v1/comments`: Add a comment to a post
+- `GET /api/v1/comments/post/:postId`: Get comments for a post
+- `POST /api/v1/comments/:id/like`: Like/unlike a comment
+- `DELETE /api/v1/comments/:id`: Delete a comment
 
-## Xác thực
+### Follows
+- `POST /api/v1/follows/:targetId`: Follow a profile
+- `DELETE /api/v1/follows/:targetId`: Unfollow a profile
+- `GET /api/v1/follows/followers/:identifier`: Get followers of a profile
+- `GET /api/v1/follows/following/:identifier`: Get profiles followed by a user
 
-Xác thực được xử lý thông qua JWT token, tích hợp với Authen_service. API mong đợi một Bearer token trong header Authorization cho các endpoint được bảo vệ.
+### Notifications
+- `GET /api/v1/notifications`: Get user notifications
+- `PATCH /api/v1/notifications/read`: Mark notifications as read
+- `GET /api/v1/notifications/unread-count`: Get unread notification count
+
+## WebSocket Events
+
+### Connection
+- `connection`: User connects with JWT authentication
+- `disconnect`: User disconnects
+
+### Messages
+- `send_message`: Send a private message
+- `new_message`: Receive a private message
+- `message_sent`: Confirmation message sent
+- `message_read`: Message read status update
+- `typing`: User is typing indicator
+
+### Notifications
+- `notification`: Receive a notification
+- `user_status_change`: Friend's online/offline status changed
+
+## Authentication
+
+Authentication is handled via JWT tokens, integrated with Authen_service. API expects a Bearer token in the Authorization header for protected endpoints:
 
 ```
 Authorization: Bearer <token>
 ```
 
-## Tích hợp với Authen_service
-
-Social_service tích hợp với Authen_service để:
-1. Xác thực người dùng thông qua JWT token
-2. Tự động tạo hồ sơ cho người dùng mới từ Authen_service
-3. Kiểm tra quyền hạn thông qua Authen_service
-
-## Testing 
-
-```
-npm test
-```
-
-## Phát triển
+## Development
 
 ```
 npm run dev
 ```
 
-## Deployment
+## Production Deployment
 
-1. Đảm bảo tất cả biến môi trường được cấu hình chính xác trong `.env`
+1. Ensure all environment variables are correctly configured in `.env`
 2. Build project:
    ```
    npm run build
    ```
-3. Khởi chạy trong môi trường production:
+3. Run in production mode:
    ```
-   npm run start:prod
+   npm start
    ```
 
 ## License
 
-Project này được cấp phép theo giấy phép MIT. 
+This project is licensed under the MIT License.
