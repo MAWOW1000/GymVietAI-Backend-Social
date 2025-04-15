@@ -1,6 +1,6 @@
-import { Profile, Follow } from '../models';
+import { Profile, Follow } from '../models/index.js';
 import { Op } from 'sequelize';
-import { ProfileSchema } from '../models/profile.model';
+import { ProfileSchema } from '../models/profile.model.js';
 import { z } from 'zod';
 
 /**

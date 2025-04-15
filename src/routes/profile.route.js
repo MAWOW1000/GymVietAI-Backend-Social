@@ -6,11 +6,11 @@ import {
   searchProfiles,
   getSuggestedProfiles,
   getCurrentUserProfile
-} from '../controller/profile.controller';
-import { authenticate, optionalAuth } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { ProfileSchema } from '../models/profile.model';
-import { searchSchema } from '../middleware/validation.middleware';
+} from '../controllers/profile.controller.js';
+import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validation.middleware.js';
+import { ProfileSchema } from '../models/profile.model.js';
+import { searchSchema } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 

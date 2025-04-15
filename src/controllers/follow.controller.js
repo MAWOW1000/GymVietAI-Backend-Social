@@ -1,6 +1,6 @@
-import { Follow, Profile, Notification } from '../models';
+import { Follow, Profile, Notification } from '../models/index.js';
 import { Op } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 
 /**
  * Follow a profile

@@ -1,7 +1,7 @@
-import { Post, Profile, Like, Comment, Follow, Notification, Hashtag } from '../models';
+import { Post, Profile, Like, Comment, Follow, Notification, Hashtag } from '../models/index.js';
 import { Op } from 'sequelize';
-import sequelize from '../config/database';
-import { extractHashtags, extractMentions } from '../utils/content.utils';
+import sequelize from '../config/database.js';
+import { extractHashtags, extractMentions } from '../utils/content.utils.js';
 import axios from 'axios';
 
 // Cấu hình API Authen_service

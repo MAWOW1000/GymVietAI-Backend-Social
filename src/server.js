@@ -9,7 +9,7 @@ import morgan from 'morgan';
 
 // Import routes
 import routes from './routes/index.js';
-import { initializeDatabase } from './utils/database';
+import { initializeDatabase } from './utils/database.js';
 
 dotenv.config();
 
@@ -106,10 +106,9 @@ process.on('unhandledRejection', (err) => {
   });
 });
 
-// Start server if this file is run directly
-if (require.main === module) {
-  startServer();
-} else {
-  // Export for testing
-  module.exports = { app, startServer };
-} 
+// Start server - in ES modules, we can't check require.main === module
+// so just start the server directly
+startServer();
+
+// Export for testing
+export { app, startServer }; 

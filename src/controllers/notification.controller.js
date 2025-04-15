@@ -1,6 +1,6 @@
-import { Notification, Profile } from '../models';
+import { Notification, Profile } from '../models/index.js';
 import { Op } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 
 /**
  * Get notifications for authenticated user

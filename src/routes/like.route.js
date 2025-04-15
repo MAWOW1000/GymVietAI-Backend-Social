@@ -3,10 +3,10 @@ import {
   likePost,
   unlikePost,
   getLikes
-} from '../controller/like.controller';
-import { authenticate, optionalAuth } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { paginationSchema } from '../middleware/validation.middleware';
+} from '../controllers/like.controller.js';
+import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validation.middleware.js';
+import { paginationSchema } from '../middleware/validation.middleware.js';
 import { z } from 'zod';
 
 // Tạo schema riêng cho tham số postId

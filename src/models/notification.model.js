@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database';
-import Profile from './profile.model';
+import sequelize from '../config/database.js';
+import Profile from './profile.model.js';
 
 const Notification = sequelize.define('Notification', {
   id: {

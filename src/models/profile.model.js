@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 import { z } from 'zod';
 
 const Profile = sequelize.define('Profile', {

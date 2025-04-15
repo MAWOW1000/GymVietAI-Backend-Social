@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { Profile } from '../models/index.js';
 import axios from 'axios';
-import { Profile } from '../models';
 
 // Cấu hình API Authen_service
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://localhost:8080';

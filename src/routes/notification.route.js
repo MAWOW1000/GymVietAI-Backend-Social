@@ -4,10 +4,10 @@ import {
   markAsRead,
   getUnreadCount,
   deleteNotification
-} from '../controller/notification.controller';
-import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { paginationSchema } from '../middleware/validation.middleware';
+} from '../controllers/notification.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validation.middleware.js';
+import { paginationSchema } from '../middleware/validation.middleware.js';
 import { z } from 'zod';
 
 // Tạo schema riêng cho notification ID

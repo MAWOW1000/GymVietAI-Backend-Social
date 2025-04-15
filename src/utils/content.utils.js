@@ -6,15 +6,14 @@
 export const extractHashtags = (content) => {
   if (!content) return [];
   
+  // Regex để tìm hashtag (# theo sau bởi các chữ cái, số hoặc gạch dưới)
   const hashtagRegex = /#(\w+)/g;
-  const hashtags = [];
-  let match;
+  const matches = content.match(hashtagRegex);
   
-  while ((match = hashtagRegex.exec(content)) !== null) {
-    hashtags.push(match[1]);
-  }
+  if (!matches) return [];
   
-  return [...new Set(hashtags)]; // Remove duplicates
+  // Loại bỏ ký tự # và trả về mảng
+  return matches.map(tag => tag.substring(1));
 };
 
 /**
@@ -25,15 +24,14 @@ export const extractHashtags = (content) => {
 export const extractMentions = (content) => {
   if (!content) return [];
   
+  // Regex để tìm mention (@ theo sau bởi các chữ cái, số hoặc gạch dưới)
   const mentionRegex = /@(\w+)/g;
-  const mentions = [];
-  let match;
+  const matches = content.match(mentionRegex);
   
-  while ((match = mentionRegex.exec(content)) !== null) {
-    mentions.push(match[1]);
-  }
+  if (!matches) return [];
   
-  return [...new Set(mentions)]; // Remove duplicates
+  // Loại bỏ ký tự @ và trả về mảng
+  return matches.map(mention => mention.substring(1));
 };
 
 /**

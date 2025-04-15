@@ -1,5 +1,5 @@
-import { Like, Post, Profile, Notification } from '../models';
-import sequelize from '../config/database';
+import { Like, Post, Profile, Notification } from '../models/index.js';
+import sequelize from '../config/database.js';
 
 /**
  * Like a post

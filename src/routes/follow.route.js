@@ -4,10 +4,10 @@ import {
   unfollowProfile,
   getFollowers,
   getFollowing
-} from '../controller/follow.controller';
-import { authenticate, optionalAuth } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { paginationSchema } from '../middleware/validation.middleware';
+} from '../controllers/follow.controller.js';
+import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validation.middleware.js';
+import { paginationSchema } from '../middleware/validation.middleware.js';
 import { z } from 'zod';
 
 // Tạo schema riêng cho tham số targetId

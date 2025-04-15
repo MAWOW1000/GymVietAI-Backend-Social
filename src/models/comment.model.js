@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 import { z } from 'zod';
-import Profile from './profile.model';
-import Post from './post.model';
+import Profile from './profile.model.js';
+import Post from './post.model.js';
 
 const Comment = sequelize.define('Comment', {
   id: {

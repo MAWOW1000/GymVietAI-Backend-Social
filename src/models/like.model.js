@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database';
-import Profile from './profile.model';
-import Post from './post.model';
+import sequelize from '../config/database.js';
+import Profile from './profile.model.js';
+import Post from './post.model.js';
 
 const Like = sequelize.define('Like', {
   id: {

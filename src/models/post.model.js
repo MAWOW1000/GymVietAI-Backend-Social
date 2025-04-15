@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 import { z } from 'zod';
-import Profile from './profile.model';
+import Profile from './profile.model.js';
 
 const Post = sequelize.define('Post', {
   id: {

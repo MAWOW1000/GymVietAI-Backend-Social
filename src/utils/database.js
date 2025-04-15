@@ -1,5 +1,5 @@
-import sequelize from '../config/database';
-import { syncDatabase } from '../models';
+import sequelize from '../config/database.js';
+import { syncDatabase } from '../models/index.js';
 
 /**
  * Initialize database connection and sync models
@@ -19,8 +19,4 @@ export const initializeDatabase = async () => {
     console.error('Unable to connect to the database:', error);
     return false;
   }
-};
-
-module.exports = {
-  initializeDatabase
 }; 

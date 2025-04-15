@@ -1,12 +1,12 @@
 import express from 'express';
-import postRoutes from './post.route';
-import likeRoutes from './like.route';
-import followRoutes from './follow.route';
-import notificationRoutes from './notification.route';
-import profileRoutes from './profile.route';
-import authRoutes from './authRoutes';
-import userRoutes from './userRoutes';
-import { authenticate, optionalAuth } from '../middleware/auth.middleware';
+import postRoutes from './post.route.js';
+import likeRoutes from './like.route.js';
+import followRoutes from './follow.route.js';
+import notificationRoutes from './notification.route.js';
+import profileRoutes from './profile.route.js';
+import authRoutes from './authRoutes.js';
+import userRoutes from './userRoutes.js';
+import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 

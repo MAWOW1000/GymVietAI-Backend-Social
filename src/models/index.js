@@ -1,12 +1,12 @@
-import sequelize from '../config/database';
-import Profile from './profile.model';
-import Post from './post.model';
-import Like from './like.model';
-import Comment from './comment.model';
-import Follow from './follow.model';
-import Notification from './notification.model';
-import Hashtag from './hashtag.model';
-import User from './User';
+import sequelize from '../config/database.js';
+import Profile from './profile.model.js';
+import Post from './post.model.js';
+import Like from './like.model.js';
+import Comment from './comment.model.js';
+import Follow from './follow.model.js';
+import Notification from './notification.model.js';
+import Hashtag from './hashtag.model.js';
+import User from './User.js';
 
 // Initialize models
 const models = {
