@@ -11,6 +11,7 @@ import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validation.middleware.js';
 import { ProfileSchema } from '../models/profile.model.js';
 import { searchSchema } from '../middleware/validation.middleware.js';
+import Profile from '../models/profile.model.js';
 
 const router = express.Router();
 
@@ -40,6 +41,50 @@ router.get(
   '/suggested',
   authenticate,
   getSuggestedProfiles
+);
+
+// Debug route to check model structure
+router.get('/debug/model', async (req, res) => {
+  try {
+    // Get model attributes
+    const attributes = Object.keys(Profile.rawAttributes);
+    
+    // Check if any profiles exist
+    const count = await Profile.count();
+    
+    // Get a sample profile if available (for testing userId field)
+    let sampleProfile = null;
+    if (count > 0) {
+      sampleProfile = await Profile.findOne();
+    }
+    
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        modelName: Profile.name,
+        tableName: Profile.tableName,
+        attributes,
+        profileCount: count,
+        hasUserIdField: attributes.includes('userId'),
+        sampleProfileId: sampleProfile?.id,
+        sampleUserId: sampleProfile?.userId,
+        sampleUsername: sampleProfile?.username
+      }
+    });
+  } catch (error) {
+    console.error('Error in model debug route:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Error checking model'
+    });
+  }
+});
+
+// Get a profile by user ID (auth ID)
+router.get(
+  '/by-user-id/:userId',
+  optionalAuth,
+  getProfile
 );
 
 // Get a profile by username or ID (must be last as it's a catch-all)

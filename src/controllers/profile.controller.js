@@ -1,7 +1,9 @@
-import { Profile, Follow } from '../models/index.js';
 import { Op } from 'sequelize';
 import { ProfileSchema } from '../models/profile.model.js';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
+import { Profile, Follow, User, Post } from '../models/index.js';
 
 /**
  * Create a new user profile
@@ -62,27 +64,56 @@ export const createProfile = async (req, res) => {
  */
 export const getProfile = async (req, res) => {
   try {
-    const { identifier } = req.params;
+    // Check if we're using the by-user-id route or the standard identifier route
+    const { identifier, userId } = req.params;
+    const lookupValue = userId || identifier;
     const currentUser = req.user;
     
-    // Determine if looking up by username or ID
-    const isUUID = z.string().uuid().safeParse(identifier).success;
+    console.log(`[ProfileController] Request params:`, {
+      identifier,
+      userId,
+      lookupValue,
+      path: req.path,
+      originalUrl: req.originalUrl
+    });
+    
+    // Determine lookup type - for by-user-id, we look up by userId field
+    // Otherwise, determine if it's a UUID for id or use username
+    let whereClause = {};
+    
+    if (userId) {
+      // If using the by-user-id route, look up by userId field
+      console.log(`[ProfileController] Looking up by userId: ${userId}`);
+      whereClause = { userId: lookupValue };
+    } else {
+      // For standard route, determine if UUID or username
+      const isUUID = z.string().uuid().safeParse(lookupValue).success;
+      console.log(`[ProfileController] Looking up by ${isUUID ? 'UUID id' : 'username'}: ${lookupValue}`);
+      whereClause = isUUID ? { id: lookupValue } : { username: lookupValue };
+    }
+    
+    console.log(`[ProfileController] Final where clause:`, whereClause);
     
     const profile = await Profile.findOne({
-      where: isUUID 
-        ? { id: identifier }
-        : { username: identifier },
+      where: whereClause,
       attributes: { 
         exclude: ['deletedAt']
       }
     });
     
     if (!profile) {
+      console.log(`[ProfileController] Profile not found for where clause:`, whereClause);
       return res.status(404).json({
         status: 'error',
         message: 'Profile not found'
       });
     }
+    
+    console.log(`[ProfileController] Profile found:`, {
+      id: profile.id,
+      userId: profile.userId,
+      username: profile.username
+    });
     
     // Check if current user follows this profile
     let isFollowing = false;
