@@ -5,7 +5,8 @@ import {
   updateProfile, 
   searchProfiles,
   getSuggestedProfiles,
-  getCurrentUserProfile
+  getCurrentUserProfile,
+  getProfileByUserId
 } from '../controllers/profile.controller.js';
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validation.middleware.js';
@@ -18,6 +19,7 @@ const router = express.Router();
 // Create a new profile
 router.post(
   '/',
+  authenticate,
   validate(ProfileSchema),
   createProfile
 );
@@ -32,6 +34,7 @@ router.get(
 // Search for profiles
 router.get(
   '/search',
+  optionalAuth,
   validate(searchSchema, 'query'),
   searchProfiles
 );
@@ -84,7 +87,7 @@ router.get('/debug/model', async (req, res) => {
 router.get(
   '/by-user-id/:userId',
   optionalAuth,
-  getProfile
+  getProfileByUserId
 );
 
 // Get a profile by username or ID (must be last as it's a catch-all)

@@ -65,7 +65,10 @@ const initializeSocketIO = (server) => {
         const { receiverId, content, media } = data;
         
         if (!receiverId || !content) {
-          return socket.emit('error', { message: 'Receiver ID and content are required' });
+          return socket.emit('error', { 
+            code: 'INVALID_DATA',
+            message: 'Receiver ID and content are required' 
+          });
         }
         
         // Create message in database
@@ -108,7 +111,12 @@ const initializeSocketIO = (server) => {
           }
         });
       } catch (error) {
-        socket.emit('error', { message: 'Failed to send message', error: error.message });
+        console.error('Failed to send message:', error);
+        socket.emit('error', { 
+          code: 'DATABASE_ERROR',
+          message: 'Failed to send message',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
       }
     });
     
@@ -117,14 +125,27 @@ const initializeSocketIO = (server) => {
       try {
         const { messageId } = data;
         
+        if (!messageId) {
+          return socket.emit('error', { 
+            code: 'INVALID_DATA',
+            message: 'Message ID is required' 
+          });
+        }
+        
         const message = await Message.findByPk(messageId);
         
         if (!message) {
-          return socket.emit('error', { message: 'Message not found' });
+          return socket.emit('error', { 
+            code: 'NOT_FOUND',
+            message: 'Message not found' 
+          });
         }
         
         if (message.receiverId !== socket.user.id) {
-          return socket.emit('error', { message: 'Unauthorized to mark this message as read' });
+          return socket.emit('error', { 
+            code: 'UNAUTHORIZED',
+            message: 'Unauthorized to mark this message as read' 
+          });
         }
         
         // Mark as read
@@ -134,8 +155,16 @@ const initializeSocketIO = (server) => {
         if (connectedUsers.has(message.senderId)) {
           io.to(`user:${message.senderId}`).emit('message_read', { messageId });
         }
+        
+        // Confirm to the client that message was marked as read
+        socket.emit('message_marked_read', { messageId });
       } catch (error) {
-        socket.emit('error', { message: 'Failed to mark message as read', error: error.message });
+        console.error('Failed to mark message as read:', error);
+        socket.emit('error', { 
+          code: 'DATABASE_ERROR',
+          message: 'Failed to mark message as read',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+        });
       }
     });
     

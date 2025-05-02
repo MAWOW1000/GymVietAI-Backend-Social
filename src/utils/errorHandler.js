@@ -63,8 +63,58 @@ const catchAsync = (fn) => {
   };
 };
 
+// Helper function for consistent error responses
+const errorResponse = {
+  // Validation errors (400)
+  badRequest: (res, message = 'Bad Request', errors = null) => {
+    return res.status(400).json({
+      status: 'error',
+      message,
+      ...(errors && { errors })
+    });
+  },
+  
+  // Authentication errors (401)
+  unauthorized: (res, message = 'Authentication required') => {
+    return res.status(401).json({
+      status: 'error',
+      message
+    });
+  },
+  
+  // Permission errors (403)
+  forbidden: (res, message = 'Permission denied') => {
+    return res.status(403).json({
+      status: 'error',
+      message
+    });
+  },
+  
+  // Not found errors (404)
+  notFound: (res, message = 'Resource not found') => {
+    return res.status(404).json({
+      status: 'error',
+      message
+    });
+  },
+  
+  // Server errors (500)
+  serverError: (res, message = 'Internal Server Error', error = null) => {
+    // Log the actual error for debugging
+    if (error) console.error(error);
+    
+    return res.status(500).json({
+      status: 'error',
+      message: process.env.NODE_ENV === 'production' 
+        ? 'An unexpected error occurred' 
+        : message
+    });
+  }
+};
+
 module.exports = {
   errorHandler,
   AppError,
-  catchAsync
+  catchAsync,
+  errorResponse
 }; 

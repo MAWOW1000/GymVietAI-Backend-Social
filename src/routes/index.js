@@ -6,6 +6,7 @@ import notificationRoutes from './notification.route.js';
 import profileRoutes from './profile.route.js';
 import authRoutes from './authRoutes.js';
 import userRoutes from './userRoutes.js';
+import commentRoutes from './comment.route.js';
 import { authenticate, optionalAuth } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -35,6 +36,7 @@ router.get('/debug', (req, res) => {
   routes.push(`${API_PREFIX}/posts - Post management`);
   routes.push(`${API_PREFIX}/follows - Follow relationships`);
   routes.push(`${API_PREFIX}/notifications - User notifications`);
+  routes.push(`${API_PREFIX}/comments - Comment management`);
   
   res.status(200).json({
     status: 'success',
@@ -54,6 +56,7 @@ router.use(`${API_PREFIX}/likes`, authenticate, likeRoutes);
 router.use(`${API_PREFIX}/follows`, authenticate, followRoutes);
 router.use(`${API_PREFIX}/notifications`, authenticate, notificationRoutes);
 router.use(`${API_PREFIX}/users`, userRoutes);
+router.use(`${API_PREFIX}/comments`, commentRoutes);
 
 // Error handling for undefined routes
 router.use('*', (req, res) => {

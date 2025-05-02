@@ -16,31 +16,35 @@ export const followProfile = async (req, res) => {
     
     // Prevent following yourself
     if (targetId === profileId) {
+      await transaction.rollback();
       return res.status(400).json({
         status: 'error',
         message: 'You cannot follow yourself'
       });
     }
     
-    // Check if target profile exists
-    const targetProfile = await Profile.findByPk(targetId);
+    // Check if target profile exists - đưa vào transaction
+    const targetProfile = await Profile.findByPk(targetId, { transaction });
     
     if (!targetProfile) {
+      await transaction.rollback();
       return res.status(404).json({
         status: 'error',
         message: 'Target profile not found'
       });
     }
     
-    // Check if already following
+    // Check if already following - đưa vào transaction
     const existingFollow = await Follow.findOne({
       where: {
         followerId: profileId,
         followingId: targetId
-      }
+      },
+      transaction
     });
     
     if (existingFollow) {
+      await transaction.rollback();
       return res.status(400).json({
         status: 'error',
         message: 'You are already following this profile'
@@ -127,31 +131,35 @@ export const unfollowProfile = async (req, res) => {
     
     // Prevent unfollowing yourself
     if (targetId === profileId) {
+      await transaction.rollback();
       return res.status(400).json({
         status: 'error',
         message: 'You cannot unfollow yourself'
       });
     }
     
-    // Check if target profile exists
-    const targetProfile = await Profile.findByPk(targetId);
+    // Check if target profile exists - đưa vào transaction
+    const targetProfile = await Profile.findByPk(targetId, { transaction });
     
     if (!targetProfile) {
+      await transaction.rollback();
       return res.status(404).json({
         status: 'error',
         message: 'Target profile not found'
       });
     }
     
-    // Check if following relationship exists
+    // Check if following relationship exists - đưa vào transaction
     const follow = await Follow.findOne({
       where: {
         followerId: profileId,
         followingId: targetId
-      }
+      },
+      transaction
     });
     
     if (!follow) {
+      await transaction.rollback();
       return res.status(400).json({
         status: 'error',
         message: 'You are not following this profile'
@@ -160,15 +168,17 @@ export const unfollowProfile = async (req, res) => {
     
     // If the follow was approved, update counts
     if (follow.isApproved) {
-      // Decrement follower count for target
-      if (targetProfile.followerCount > 0) {
-        await targetProfile.decrement('followerCount', { transaction });
-      }
+      // Cập nhật an toàn: tính toán lại count thay vì decrement
+      await targetProfile.update({
+        followerCount: sequelize.literal(`GREATEST(followerCount - 1, 0)`)
+      }, { transaction });
       
-      // Decrement following count for current user
-      const currentProfile = await Profile.findByPk(profileId);
-      if (currentProfile.followingCount > 0) {
-        await currentProfile.decrement('followingCount', { transaction });
+      // Cập nhật an toàn: tính toán lại count thay vì decrement
+      const currentProfile = await Profile.findByPk(profileId, { transaction });
+      if (currentProfile) {
+        await currentProfile.update({
+          followingCount: sequelize.literal(`GREATEST(followingCount - 1, 0)`)
+        }, { transaction });
       }
     }
     

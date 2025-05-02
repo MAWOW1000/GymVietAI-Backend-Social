@@ -115,29 +115,46 @@ Post.hasMany(Post, { foreignKey: 'originalPostId', as: 'reposts' });
 
 // Zod schema for validation
 export const PostSchema = z.object({
-  content: z.string().max(500).optional(),
+  content: z.string().max(500, {
+    message: "Nội dung không được vượt quá 500 ký tự"
+  }).optional(),
+  
   mediaUrls: z.union([
-    z.array(z.string()).optional(),
-    z.string().optional().transform(val => val ? [val] : undefined)
+    z.array(z.string().url({
+      message: "URL hình ảnh/video không hợp lệ"
+    })).optional(),
+    z.string().url({
+      message: "URL hình ảnh/video không hợp lệ"
+    }).optional().transform(val => val ? [val] : undefined)
   ]),
-  parentId: z.string().uuid().optional(),
+  
+  parentId: z.string().uuid({
+    message: "Parent ID phải là UUID hợp lệ"
+  }).optional(),
+  
   isPublic: z.boolean().optional(),
+  
   tags: z.array(z.string()).optional(),
+  
   mentions: z.array(z.string()).optional(),
+  
   isRepost: z.boolean().optional(),
-  originalPostId: z.string().uuid().optional()
-}).refine(data => {
-  // Nếu là repost, originalPostId là bắt buộc
-  if (data.isRepost === true && !data.originalPostId) {
-    return false;
+  
+  originalPostId: z.string().uuid({
+    message: "Original post ID phải là UUID hợp lệ"
+  }).optional()
+}).refine(
+  data => !(data.isRepost === true && !data.originalPostId),
+  {
+    message: "Original post ID là bắt buộc khi tạo repost",
+    path: ["originalPostId"]
   }
-  // Nếu không phải repost, phải có nội dung hoặc media
-  if (data.isRepost !== true && !data.content && (!data.mediaUrls || data.mediaUrls.length === 0)) {
-    return false;
+).refine(
+  data => !(data.isRepost !== true && !data.content && (!data.mediaUrls || data.mediaUrls.length === 0)),
+  {
+    message: "Phải có nội dung hoặc hình ảnh/video cho bài đăng",
+    path: ["content"]
   }
-  return true;
-}, {
-  message: "Either content/media is required for normal posts, or originalPostId is required for reposts"
-});
+);
 
 export default Post; 

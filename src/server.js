@@ -10,6 +10,8 @@ import morgan from 'morgan';
 // Import routes
 import routes from './routes/index.js';
 import { initializeDatabase } from './utils/database.js';
+import setupCommentHandlers from './utils/socketHandlers/commentHandlers.js';
+import socketAuthMiddleware from './middleware/socket-auth.middleware.js';
 
 dotenv.config();
 
@@ -45,6 +47,9 @@ const io = new Server(httpServer, {
   }
 });
 
+// Apply socket authentication middleware
+io.use(socketAuthMiddleware);
+
 // Socket.io connection handler
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
@@ -56,6 +61,9 @@ io.on('connection', (socket) => {
       console.log(`User ${userId} joined room user:${userId}`);
     }
   });
+  
+  // Setup comment handlers since user is authenticated
+  setupCommentHandlers(io, socket);
   
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
