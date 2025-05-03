@@ -323,4 +323,73 @@ export const getCurrentUserProfile = async (req, res) => {
       message: 'Failed to get profile'
     });
   }
+};
+
+/**
+ * Get a profile by user ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getProfileByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUser = req.user;
+    
+    const profile = await Profile.findOne({
+      where: { userId },
+      attributes: { 
+        exclude: ['deletedAt']
+      }
+    });
+    
+    if (!profile) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Profile not found'
+      });
+    }
+    
+    // Check if current user follows this profile
+    let isFollowing = false;
+    let isFollowedBy = false;
+    
+    if (currentUser) {
+      // Check if current user follows this profile
+      const followRecord = await Follow.findOne({
+        where: {
+          followerId: currentUser.profileId,
+          followingId: profile.id
+        }
+      });
+      
+      isFollowing = !!followRecord;
+      
+      // Check if this profile follows the current user
+      const followerRecord = await Follow.findOne({
+        where: {
+          followerId: profile.id,
+          followingId: currentUser.profileId
+        }
+      });
+      
+      isFollowedBy = !!followerRecord;
+    }
+    
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        profile: {
+          ...profile.toJSON(),
+          isFollowing,
+          isFollowedBy
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error getting profile by userId:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Failed to get profile'
+    });
+  }
 }; 
